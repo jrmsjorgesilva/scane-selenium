@@ -1,0 +1,10 @@
+.venv/
+
+put_files_here/*
+!put_files_here/.keep
+
+merged_files/*
+!merged_files/.keep
+
+downloads/*
+!downloads/.keep
