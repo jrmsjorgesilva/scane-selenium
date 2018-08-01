@@ -124,6 +124,8 @@ def concatenate_files(files):
 def concatenate_and_clean(input_file_name):
     # Merge all the csv files for __topic__ into one
     exported_files = glob('{}/*.csv'.format(DOWNLOADS_PATH))
+    if len(exported_files) == 0:
+        return
 
     # `Clean` merged __topic__ file
     df = concatenate_files(exported_files)
@@ -184,15 +186,21 @@ if __name__ == '__main__':
 
                 # Export 100 files, download them, clean up, continue
                 if j > 0 and j % 100 == 0:
-                    sleep_then_download()
-                    # Sleep to make sure all files have completed downloading
-                    sleep(300)
-                    clear_file_dropdown()
+                    try:
+                        sleep_then_download()
+                        # Sleep to make sure all files have completed downloading
+                        sleep(300)
+                        clear_file_dropdown()
+                    except TimeoutException:
+                        pass
 
             # Download any of the leftovers
-            sleep_then_download()
-            sleep(300)
-            clear_file_dropdown()
+            try:
+                sleep_then_download()
+                sleep(300)
+                clear_file_dropdown()
+            except TimeoutException:
+                pass
 
         concatenate_and_clean(file)
 
