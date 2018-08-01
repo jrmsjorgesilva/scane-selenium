@@ -160,7 +160,9 @@ if __name__ == '__main__':
     )
     driver = webdriver.Chrome(chrome_options=chromeOptions)
 
-    input_files = filter(lambda f: f[0] is not '.', os.listdir(INPUT_FILES_PATH))
+    input_files = filter(
+        lambda f: f[0] is not '.', os.listdir(INPUT_FILES_PATH)
+    )
     should_login = True
 
     # Iterate through each file in the `INPUT_FILES_PATH`
@@ -188,7 +190,8 @@ if __name__ == '__main__':
                 if j > 0 and j % 100 == 0:
                     try:
                         sleep_then_download()
-                        # Sleep to make sure all files have completed downloading
+                        # Sleep to make sure all files have completed
+                        # downloading
                         sleep(300)
                         clear_file_dropdown()
                     except TimeoutException:
