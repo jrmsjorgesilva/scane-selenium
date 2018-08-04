@@ -175,34 +175,38 @@ if __name__ == '__main__':
 
         # Read each file line by line (target url by targe url)
         file_path = '{0}/{1}'.format(INPUT_FILES_PATH, file)
-        with codecs.open(file_path, encoding='utf-16') as f:
-            for j, line in enumerate(f):
-                driver.get(URL_BASE + line.rstrip('\n'))
-                if should_login:
-                    login()
-                    should_login = False
-                try:
-                    export_link_data()
-                except TimeoutException:
-                    pass
+        for encoding in ['utf-16', 'utf-8']:
+            try:
+                with codecs.open(file_path, encoding=encoding) as f:
+                    for j, line in enumerate(f):
+                        driver.get(URL_BASE + line.rstrip('\n'))
+                        if should_login:
+                            login()
+                            should_login = False
+                        try:
+                            export_link_data()
+                        except TimeoutException:
+                            pass
 
-                # Export 100 files, download them, clean up, continue
-                if j > 0 and j % 100 == 0:
+                        # Export 100 files, download them, clean up, continue
+                        if j > 0 and j % 100 == 0:
+                            try:
+                                sleep_then_download()
+                                # Sleep to make sure all files have completed
+                                # downloading
+                                sleep(300)
+                                clear_file_dropdown()
+                            except TimeoutException:
+                                pass
+
+                    # Download any of the leftovers
                     try:
                         sleep_then_download()
-                        # Sleep to make sure all files have completed
-                        # downloading
                         sleep(300)
                         clear_file_dropdown()
                     except TimeoutException:
                         pass
-
-            # Download any of the leftovers
-            try:
-                sleep_then_download()
-                sleep(300)
-                clear_file_dropdown()
-            except TimeoutException:
+            except UnicodeError:
                 pass
 
         concatenate_and_clean(file)
