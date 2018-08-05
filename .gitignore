@@ -1,4 +1,5 @@
 .venv/
+*.pyc
 
 put_files_here/*
 !put_files_here/.keep
