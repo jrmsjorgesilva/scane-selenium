@@ -14,13 +14,16 @@ OUTPUT_FILES_PATH = '{}/merged_files'.format(pwd)
 
 def concatenate_files(files):
     df_list = []
-    for f in files:
-        for encoding in ['utf-16', 'utf-8']:
-            try:
-                df = pd.read_csv(f, encoding=encoding, delimiter='\t')
-                df_list.append(df)
-            except UnicodeDecodeError:
-                pass
+    for file in files:
+        try:
+            df = pd.read_csv(file, encoding='utf-16', delimiter='\t', low_memory=False)
+            df_list.append(df)
+        except UnicodeError:
+            print 'Corrupt file: {}'.format(file)
+            continue
+        except UnicodeDecodeError:
+            df = pd.read_csv(file, encoding='utf-8', delimiter='\t', low_memory=False)
+            df_list.append(df)
     return pd.concat(df_list)
 
 
@@ -42,8 +45,12 @@ def concatenate_and_clean(input_file_name):
 
     # Write excel file
     excel_file_path = '{0}/{1}.xlsx'.format(OUTPUT_FILES_PATH, base_file_name)
-    writer = pd.ExcelWriter(excel_file_path)
-    df.to_excel(writer, index=False, encoding='utf-16')
+    writer = pd.ExcelWriter(
+        excel_file_path,
+        engine='xlsxwriter',
+        options={'strings_to_urls': False}
+    )
+    df.to_excel(writer, index=False, encoding='utf-8')
     writer.save()
 
     # Write `Referring Page URL's` to text file
@@ -57,4 +64,9 @@ def concatenate_and_clean(input_file_name):
 
 
 if __name__ == '__main__':
-    concatenate_and_clean(file)
+    import sys
+    try:
+        concatenate_and_clean(sys.argv[1])
+    except IndexError:
+        print 'ERROR: you did not provide an output file name - `python merge_files.py <outputfilename>`'
+        sys.exit()
