@@ -27,7 +27,7 @@ def concatenate_files(files):
     return pd.concat(df_list)
 
 
-def concatenate_and_clean(input_file_name):
+def concatenate_and_clean(input_file_name, should_cleanup=False):
     # Merge all the csv files for __topic__ into one
     exported_files = glob('{}/*.csv'.format(DOWNLOADS_PATH))
     if len(exported_files) == 0:
@@ -58,9 +58,10 @@ def concatenate_and_clean(input_file_name):
     raw_txt_path = '{0}/{1}RAW.txt'.format(OUTPUT_FILES_PATH, base_file_name)
     df.to_csv(raw_txt_path, header=None, index=False, encoding='utf-16')
 
-    # Remove all files from the downloads dir
-    for f in exported_files:
-        os.remove(f)
+    if should_cleanup:
+        # Remove all files from the downloads dir
+        for f in exported_files:
+            os.remove(f)
 
 
 if __name__ == '__main__':
