@@ -16,8 +16,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 # Constants
 URL_BASE = u'https://ahrefs.com/site-explorer/backlinks/v5/external/prefix/live/all/dofollow/1/ahrefs_rank_desc?target='
-EMAIL = 'allegade.virtualestates@gmail.com'
-PASSWORD = 'Webs!te1'
+EMAIL = os.getenv('EMAIL')
+PASSWORD = os.getenv('PASSWORD')
 
 # File paths
 pwd = os.getcwd()
